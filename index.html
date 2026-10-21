@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6f5f1">
+<title>Pocket — Budget</title>
+<style>
+:root{--bg:#f6f5f1;--card:#fff;--ink:#20231f;--muted:#70766e;--line:#e4e6df;--accent:#315c49;--accent-soft:#e1ece4;--warn:#a85a2a;--warn-soft:#f7e9dd;--good:#47795d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:780px;margin:auto;padding:18px 14px 42px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 16px}
+h1{font-size:25px;line-height:1.1;margin:3px 0 0;letter-spacing:-.5px}h2{font-size:16px;margin:0;font-weight:700}p{margin:0}.eyebrow,.muted,.sub{color:var(--muted)}.eyebrow{font-size:11px;font-weight:750;letter-spacing:1.2px}.muted,.sub{font-size:12px}
+select,input,button{font:inherit}select,input{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff;color:var(--ink);min-width:0;width:100%;font-size:16px}
+button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;min-height:42px;color:var(--ink);font-weight:650;cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent);color:white}button.small{min-height:34px;padding:5px 9px;font-size:12px}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #9bbba6;outline-offset:2px}
+.grid{display:grid;gap:10px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;min-width:0}.metric-label{font-size:12px;color:var(--muted)}.metric-value{font-size:clamp(19px,5vw,25px);font-weight:760;letter-spacing:-.5px;margin-top:5px;overflow-wrap:anywhere}.metric-note{font-size:11px;color:var(--muted);margin-top:3px}.income-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.income-number{font-size:27px;font-weight:800;letter-spacing:-.7px}.summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;border-top:1px solid var(--line);padding-top:13px;margin-top:13px}.summary-grid .metric-value{font-size:17px}.bar{height:6px;background:#e9ebe6;border-radius:20px;overflow:hidden}.bar>span{height:100%;display:block;background:var(--accent);border-radius:20px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}.category-group{padding-top:12px;margin-top:7px;border-top:1px solid var(--line)}.group-title{font-size:10px;letter-spacing:1px;color:var(--muted);font-weight:800;margin-bottom:3px}.cat-row{padding:10px 0;border-bottom:1px solid #eff0eb}.cat-row:last-child{border-bottom:0}.cat-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.cat-name{font-size:13px;font-weight:700}.cat-numbers{text-align:right;white-space:nowrap}.cat-budget{font-size:13px;font-weight:750}.cat-left{font-size:11px;color:var(--muted);margin-top:2px}.cat-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:6px}.pill{font-size:10px;padding:2px 6px;border-radius:20px;border:1px solid var(--line);color:var(--muted);vertical-align:1px}.over{color:var(--warn)!important}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.field.full{grid-column:1/-1}.transactions{margin-top:5px}.txn{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}.txn:last-child{border-bottom:0}.txn-name{font-size:13px;font-weight:700;overflow-wrap:anywhere}.txn-meta{font-size:11px;color:var(--muted);margin-top:3px}.txn-right{display:flex;align-items:center;gap:8px;white-space:nowrap}.txn-amount{font-size:13px;font-weight:750}.status{font-size:11px;color:var(--good);min-height:15px}.hint{background:var(--accent-soft);border-radius:12px;padding:12px;font-size:12px;color:#294d3b}.warnhint{background:var(--warn-soft);border-radius:12px;padding:10px;font-size:12px;color:#7c421f}.inline-edit{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;margin-top:10px}.budget-edit{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:8px;align-items:center;margin-top:8px}.hidden{display:none!important}.footer{font-size:11px;color:var(--muted);padding:0 2px}.button-row{display:flex;gap:8px;flex-wrap:wrap}.button-row>*{flex:1}.toast{font-size:12px;color:var(--good);min-height:16px;margin-top:7px}
+@media(min-width:600px){main{padding:28px 22px 50px}.metrics{grid-template-columns:repeat(4,minmax(0,1fr))}.metric-value{font-size:22px}.summary-grid .metric-value{font-size:19px}.card{padding:17px}}
+@media(max-width:360px){main{padding:12px 10px 30px}.card{padding:11px}.summary-grid{gap:5px}.summary-grid .metric-value{font-size:15px}.income-number{font-size:23px}}
+
+/* Compact mobile-first budget tiles */
+main{padding:14px 12px 110px;max-width:900px}
+header{align-items:flex-start;margin:3px 0 14px}
+header h1{font-size:24px}
+#month{padding:9px 8px;font-size:14px}
+.category-board{background:transparent;border:0;padding:0;margin-bottom:16px!important}
+.category-board .section-head{align-items:flex-end;margin-bottom:12px}
+.category-board .section-head .muted{font-size:10px;text-align:right}
+#categories{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.category-group{display:contents;border:0;margin:0;padding:0}
+.group-title{display:none}
+.cat-row{position:relative;display:flex;flex-direction:column;justify-content:flex-start;min-height:128px;padding:10px 9px;border:1px solid var(--line);border-radius:15px;background:#fff;gap:5px;overflow:hidden}
+.cat-top{display:flex;flex-direction:column;gap:5px;align-items:stretch}
+.cat-name{font-size:11px;line-height:1.25;min-height:28px;overflow-wrap:anywhere}
+.cat-name .pill{display:none}
+.cat-numbers{text-align:left;white-space:normal}
+.cat-budget-line{display:flex;align-items:center;gap:3px;min-width:0}
+.cat-budget{font-size:13px;line-height:1.25;letter-spacing:-.3px;overflow-wrap:anywhere}
+.edit-budget-icon{border:0;background:transparent;color:var(--muted);padding:2px;min-height:24px;min-width:24px;width:24px;display:inline-flex;align-items:center;justify-content:center;border-radius:7px;flex:0 0 auto}
+.edit-budget-icon svg{width:13px;height:13px;display:block}
+.cat-left{font-size:10px;line-height:1.25;margin-top:0}
+.cat-foot{margin-top:auto;align-items:flex-end;gap:3px}
+.cat-foot .sub{font-size:10px;font-weight:650}
+.cat-foot .money-left{color:#17643b!important;font-weight:800;font-size:11px}
+.cat-foot .protected{display:none}
+.cat-foot button{padding:2px 4px;min-height:24px;font-size:10px}
+.category-group .cat-row{margin:0}
+.inbound-card{margin:16px 0 10px!important}
+.inbound-card .income-number{font-size:25px}
+.inbound-card .summary-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.inbound-card .summary-grid .metric-value{font-size:15px;overflow-wrap:anywhere}
+.inbound-card .summary-grid .metric-label{font-size:10px}
+.inbound-card .bar{display:none}
+
+.header-actions{display:flex;align-items:flex-start;gap:8px}
+.eye-toggle{width:38px;min-width:38px;min-height:38px;padding:8px;display:flex;align-items:center;justify-content:center;margin-top:17px}
+.eye-toggle svg{width:19px;height:19px;display:block}
+.modal-overlay{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:rgba(22,28,23,.42);padding:0}
+.modal-overlay.hidden{display:none!important}
+.budget-sheet{z-index:61}
+.form-error{font-size:12px;color:var(--warn);min-height:16px;margin-top:8px}
+#expenseModal{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center;background:rgba(22,28,23,.42);padding:0}
+#expenseModal.hidden{display:none!important}
+.modal-sheet{width:100%;max-width:560px;background:var(--bg);border-radius:22px 22px 0 0;padding:18px 16px calc(20px + env(safe-area-inset-bottom));max-height:90dvh;overflow-y:auto;box-shadow:0 -12px 40px rgba(0,0,0,.12)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.modal-head h2{font-size:19px}
+.modal-close{border:0;background:#e9ebe6;border-radius:50%;width:38px;height:38px;padding:0;font-size:22px}
+#expenseForm .field.full button{min-height:48px;border-radius:14px}
+.sticky-footer{position:fixed;z-index:40;left:0;right:0;bottom:0;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(246,245,241,.94);backdrop-filter:blur(16px);border-top:1px solid rgba(228,230,223,.9)}
+.sticky-footer-inner{max-width:900px;margin:auto}
+#openExpense{width:100%;min-height:52px;border-radius:16px;font-size:16px;box-shadow:0 4px 14px rgba(49,92,73,.16)}
+@media(min-width:520px){main{padding:22px 18px 120px}#categories{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.cat-row{min-height:132px;padding:11px}.cat-name{font-size:12px}.cat-budget{font-size:14px}#expenseModal{align-items:center;padding:20px}.modal-sheet{border-radius:22px;padding:22px;max-height:85dvh}}
+@media(max-width:360px){main{padding-left:9px;padding-right:9px}#categories{gap:6px}.cat-row{padding:8px 7px;min-height:122px;border-radius:13px}.cat-budget{font-size:12px}.cat-name{font-size:10px}.cat-foot .sub{font-size:9px}.cat-foot .money-left{font-size:10px}.inbound-card .summary-grid .metric-value{font-size:13px}}
+</style>
+</head>
+<body>
+<main id="app">
+  <header>
+    <div><div class="eyebrow">POCKET · PERSONAL FINANCE</div><h1>Your budget</h1><p class="muted" style="margin-top:5px">Plan well. Spend confidently.</p></div>
+    <div class="header-actions"><button id="toggleInbound" class="eye-toggle" type="button" aria-label="Show income numbers" title="Show income numbers"><svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button><div style="width:132px"><label class="muted" for="month" style="display:block;font-size:11px;margin:0 0 4px">VIEW MONTH</label><select id="month" aria-label="View month"></select></div></div>
+  </header>
+
+
+  <section class="card category-board">
+    <div class="section-head"><h2>Category budgets</h2><span class="muted">Budget · spent · spent % · left</span></div>
+    <div id="categories"></div>
+  </section>
+
+  <section id="inboundCard" class="card inbound-card hidden">
+    <div class="income-row"><div><div class="metric-label">Inbound</div><div id="incomeDisplay" class="income-number">₹1,72,000</div></div><button id="editIncome" class="small" type="button">Edit income</button></div>
+    <div id="incomeEditor" class="inline-edit hidden"><input id="incomeInput" type="number" min="0" max="100000000" step="1" aria-label="Monthly income"><button id="saveIncome" class="primary" type="button">Save</button></div>
+    <div class="summary-grid">
+      <div><div class="metric-label">Allocated</div><div id="allocated" class="metric-value">₹1,63,000</div><div id="allocPct" class="metric-note">94.8% of income</div></div>
+      <div><div class="metric-label">Spent</div><div id="spent" class="metric-value">₹0</div><div id="spentPct" class="metric-note">0% of income</div></div>
+      <div><div class="metric-label">Unallocated</div><div id="unallocated" class="metric-value">₹9,000</div><div class="metric-note">Not assigned</div></div>
+    </div>
+    <div class="bar" style="margin-top:12px"><span id="allocBar" style="width:94.8%"></span></div>
+    <div class="income-row" style="margin-top:11px;align-items:center"><div><div class="metric-label">SAFE TO SPEND · FLEXIBLE CATEGORIES</div><div id="safeSpend" style="font-size:21px;font-weight:800;margin-top:2px">₹45,000</div></div><div style="text-align:right"><div class="metric-label">Potential surplus</div><div id="surplus" style="font-size:16px;font-weight:750;margin-top:4px">₹9,000</div></div></div>
+    <p class="sub" style="margin-top:6px">Safe to spend = remaining planned flexible budgets + unallocated balance. Fixed commitments and savings allocations stay reserved.</p>
+  </section>
+
+
+  <section class="card" style="margin-bottom:10px">
+    <div class="section-head"><div><h2>Additional EMIs</h2><p class="sub" style="margin-top:3px">Optional allocations from available income</p></div></div>
+    <div id="emis"></div>
+  </section>
+
+  <section id="budgetModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="budgetModalTitle">
+    <div class="modal-sheet budget-sheet">
+      <div class="modal-head"><div><h2 id="budgetModalTitle">Edit category budget</h2><p id="budgetModalCategory" class="muted" style="margin-top:4px"></p></div><button id="closeBudgetModal" class="modal-close" type="button" aria-label="Close">×</button></div>
+      <form id="budgetForm">
+        <div class="field"><label for="budgetAmount">Monthly allocated budget (₹)</label><input id="budgetAmount" type="number" min="0" max="100000000" step="0.01" inputmode="decimal" required></div>
+        <p id="budgetError" class="form-error" role="alert"></p>
+        <button class="primary" type="submit" style="width:100%;margin-top:10px;min-height:48px">Save budget</button>
+      </form>
+    </div>
+  </section>
+
+  <div id="expenseModal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="expenseTitle">
+    <div class="modal-sheet">
+      <div class="modal-head"><div><div class="eyebrow">QUICK ENTRY</div><h2 id="expenseTitle">Add expense</h2><p class="muted" style="margin-top:4px">Saved automatically on this device.</p></div><button id="closeExpense" class="modal-close" type="button" aria-label="Close expense form">×</button></div>
+      <form id="expenseForm" class="form-grid">
+        <div class="field"><label for="amount">Amount (₹)</label><input id="amount" type="number" min="0.01" max="100000000" step="0.01" placeholder="450" required></div>
+        <div class="field"><label for="date">Date</label><input id="date" type="date" required></div>
+        <div class="field full"><label for="category">Category</label><select id="category" required></select></div>
+        <div class="field full"><label for="note">Note (optional)</label><input id="note" maxlength="100" placeholder="Lunch, petrol, groceries…"></div>
+        <div class="field full"><button class="primary" style="width:100%" type="submit">Save expense</button><div id="saveStatus" class="toast" aria-live="polite"></div></div>
+      </form>
+    </div>
+  </div>
+  <div class="sticky-footer"><div class="sticky-footer-inner"><button id="openExpense" class="primary" type="button">＋ Add expense</button></div></div>
+
+  <section class="card" style="margin-bottom:10px">
+    <div class="section-head"><h2>Transactions</h2><button id="export" class="small" type="button">Export CSV</button></div>
+    <div id="history" class="transactions"><p class="muted">No expenses recorded this month.</p></div>
+  </section>
+
+  <section class="card" style="margin-bottom:10px">
+    <h2>Month-end carry-forward</h2>
+    <p class="muted" style="margin-top:5px">Start next month fresh to keep the same budget plan with an empty transaction list. Close month & carry forward additionally marks a savings recommendation for the next month. Past month records remain unchanged.</p>
+    <div class="hint" style="margin-top:12px"><div class="metric-label" style="color:inherit">RECOMMENDED SAVINGS TRANSFER</div><div id="savingsSuggestion" style="font-size:22px;font-weight:800;margin:3px 0 5px">₹9,000</div><p id="savingsText">Review your surplus before moving it to savings or your emergency fund.</p></div>
+    <div class="button-row" style="margin-top:10px"><button id="startNextMonth" type="button">＋ Start next month fresh</button><button id="closeMonth" type="button" class="primary">Close month & carry forward</button><button id="undoClose" type="button">Undo close</button></div>
+    <p id="carryStatus" class="toast" aria-live="polite"></p>
+  </section>
+
+  <section class="card" style="margin-bottom:10px">
+    <div class="section-head"><h2>Data & backup</h2><span id="storageStatus" class="pill">Auto-save on</span></div>
+    <p class="muted" style="margin:4px 0 12px">Your budget is saved in this browser on this device. Export a backup regularly. Clearing Safari website data or using a different browser/device can remove or hide local data.</p>
+    <div class="button-row"><button id="backup" type="button">Download backup</button><button id="restoreBtn" type="button">Restore backup</button><input id="restoreFile" class="hidden" type="file" accept="application/json,.json"></div>
+    <p id="backupStatus" class="toast" aria-live="polite"></p>
+  </section>
+  <p class="footer">Private, local-first tracker. No bank connection. Data is stored in this browser; a downloaded backup is the safest way to protect it. This app does not automatically transfer money to a bank or savings account.</p>
+</main>
+<script>
+(() => {
+'use strict';
+const KEY='pocket-budget-local-v1';
+const $=id=>document.getElementById(id);
+const money=n=>{const v=Number(n)||0,abs=Math.abs(v),sign=v<0?'-':'';if(abs>=1000){const k=abs/1000;return sign+'₹'+(Number.isInteger(k)?String(k):k.toFixed(1).replace(/\.0$/,''))+'K';}return sign+'₹'+abs.toLocaleString('en-IN',{minimumFractionDigits:0,maximumFractionDigits:2});};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dateString=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const monthOf=d=>d.slice(0,7);
+const monthLabel=m=>{const [y,mo]=m.split('-').map(Number);return new Date(y,mo-1,1).toLocaleDateString('en-IN',{month:'long',year:'numeric'})};
+const defaults=[
+ {group:'',items:[['Home loan / existing EMI',55000,'fixed'],['Investments',35000,'fixed'],['Power + maintenance',7000,'planned'],['Groceries + household',5000,'planned'],['Petrol',8000,'planned'],['Vehicle fund',2000,'planned'],['Medical fund',3000,'planned'],['Dining + entertainment',7000,'planned'],['Personal shopping',6000,'planned'],['Parents + gifts',5000,'planned'],['Vacation fund',10000,'planned'],['Emergency fund',10000,'planned']]}
+];
+function baseMonth(){const budgets={};defaults.forEach(g=>g.items.forEach(([name,amount,kind])=>budgets[name]={amount,kind}));return {income:0,budgets,emis:[0,0,0],carryIn:0,closed:false,carryOut:0};}
+function freshState(){const now=dateString(new Date()),m=monthOf(now);return {version:1,currentMonth:m,months:{[m]:baseMonth()},transactions:[],nextId:1};}
+let state;
+function load(){try{const raw=localStorage.getItem(KEY);if(!raw)return freshState();const parsed=JSON.parse(raw);if(parsed&&parsed.version===1&&parsed.months&&Array.isArray(parsed.transactions))return parsed;}catch(e){}return freshState();}
+state=load();
+// Keep the fixed/planned classification consistent when opening data created by an earlier build.
+const budgetKinds=Object.fromEntries(defaults.flatMap(g=>g.items).map(([name,,kind])=>[name,kind]));
+Object.values(state.months).forEach(md=>Object.entries(budgetKinds).forEach(([name,kind])=>{if(md.budgets&&md.budgets[name])md.budgets[name].kind=kind;}));
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));$('storageStatus').textContent='Auto-save on';return true;}catch(e){$('storageStatus').textContent='Save error';$('saveStatus').textContent='Could not save in browser storage. Download a backup and check available storage.';return false;}}
+function ensureMonth(m){if(state.months[m])return state.months[m];const keys=Object.keys(state.months).sort();const prev=keys.filter(k=>k<m).pop();const source=prev?state.months[prev]:null;const fresh=source?JSON.parse(JSON.stringify(source)):baseMonth();fresh.income=0;fresh.closed=false;fresh.carryOut=0;if(source&&source.closed)fresh.carryIn=source.carryOut||0;else fresh.carryIn=0;state.months[m]=fresh;return fresh;}
+function monthData(){return ensureMonth(state.currentMonth);}
+function budgetTotal(md){return Object.values(md.budgets).reduce((s,b)=>s+Number(b.amount||0),0)+md.emis.reduce((s,n)=>s+Number(n||0),0);}
+function monthTx(m=state.currentMonth){return state.transactions.filter(t=>monthOf(t.date)===m);}
+function catSpent(name,m=state.currentMonth){return monthTx(m).filter(t=>t.category===name).reduce((s,t)=>s+t.amount,0);}
+function totalSpent(m=state.currentMonth){return monthTx(m).reduce((s,t)=>s+t.amount,0);}
+function availableFlexible(md,m=state.currentMonth){return Object.entries(md.budgets).filter(([n,b])=>b.kind!=='fixed'&&n!=='Investments').reduce((s,[n,b])=>s+Math.max(0,b.amount-catSpent(n,m)),0);}
+function remainingPlan(md,m=state.currentMonth){return Object.entries(md.budgets).reduce((s,[n,b])=>s+Math.max(0,b.amount-catSpent(n,m)),0);}
+function renderMonthPicker(){const select=$('month');const months=new Set([...Object.keys(state.months),...state.transactions.map(t=>monthOf(t.date))]);months.add(state.currentMonth);const sorted=[...months].sort().reverse();select.innerHTML=sorted.map(m=>`<option value="${m}">${esc(monthLabel(m))}</option>`).join('');select.value=state.currentMonth;}
+function render(){const md=monthData(),m=state.currentMonth,tx=monthTx(m),spent=totalSpent(m),allocated=budgetTotal(md),unallocated=md.income-allocated,safe=availableFlexible(md,m)+Math.max(0,unallocated)+Math.max(0,md.carryIn);$('incomeDisplay').textContent=money(md.income);$('incomeInput').value=md.income;$('allocated').textContent=money(allocated);$('spent').textContent=money(spent);$('unallocated').textContent=money(unallocated);$('allocPct').textContent=(md.income?Math.round(allocated/md.income*1000)/10:0)+'% of income';$('spentPct').textContent=(md.income?Math.round(spent/md.income*1000)/10:0)+'% of income';$('safeSpend').textContent=money(safe);const surplus=Math.max(0,unallocated)+Math.max(0,md.carryIn);$('surplus').textContent=money(surplus);$('savingsSuggestion').textContent=money(surplus);$('savingsText').textContent=md.closed?`Month closed. ${money(md.carryOut)} was marked as the carry-forward/savings recommendation.`:`Current unallocated balance plus prior carry-in. Review this amount before moving it into savings or your emergency fund.`;$('closeMonth').disabled=md.closed;$('closeMonth').textContent=md.closed?'Month closed':'Close month & carry forward';$('undoClose').disabled=!md.closed;$('carryStatus').textContent=md.carryIn?`Carry-in from a previous month: ${money(md.carryIn)}.`:'';renderCategories(md,m);renderEmis(md);renderHistory(tx);renderMonthPicker();$('date').value=$('date').value||dateString(new Date());$('category').innerHTML=Object.keys(md.budgets).map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');}
+function renderCategories(md,m){$('categories').innerHTML=defaults.flatMap(group=>group.items).map(([name,,kind])=>{const b=md.budgets[name],used=catSpent(name,m),left=b.amount-used,spentPct=b.amount?Math.round(used/b.amount*100):0;return `<div class="cat-row"><div class="cat-top"><div style="min-width:0"><div class="cat-name">${esc(name)}</div></div><div class="cat-numbers"><div class="cat-budget-line"><span class="cat-budget">${money(b.amount)}</span><button type="button" class="edit-budget-icon" data-edit-budget="${esc(name)}" aria-label="Edit budget for ${esc(name)}" title="Edit budget"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg></button></div></div></div><div class="cat-left ${used>b.amount?'over':''}">${money(used)} spent · ${spentPct}%</div><div class="cat-foot"><span class="sub ${left<0?'over':'money-left'}">${money(left)} left</span></div></div>`}).join('');}
+function renderEmis(md){$('emis').innerHTML=md.emis.map((v,i)=>`<div class="budget-edit"><div><label for="emi-${i}" class="muted">Additional EMI ${i+1} (₹)</label></div><input id="emi-${i}" data-emi="${i}" type="number" min="0" max="100000000" step="1" value="${v}" aria-label="Additional EMI ${i+1}"></div>`).join('');}
+function renderHistory(tx){const arr=[...tx].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);$('history').innerHTML=arr.length?arr.map(t=>`<div class="txn"><div style="min-width:0"><div class="txn-name">${esc(t.note||t.category)}</div><div class="txn-meta">${esc(t.date)} · ${esc(t.category)}</div></div><div class="txn-right"><span class="txn-amount">−${money(t.amount)}</span><button class="small" type="button" data-delete="${t.id}" aria-label="Delete expense">×</button></div></div>`).join(''):'<p class="muted" style="padding:10px 0">No expenses recorded this month.</p>';}
+$('month').addEventListener('change',e=>{state.currentMonth=e.target.value;ensureMonth(state.currentMonth);save();render();});
+$('editIncome').addEventListener('click',()=>{$('incomeEditor').classList.toggle('hidden');$('incomeInput').focus();});
+$('saveIncome').addEventListener('click',()=>{const n=Number($('incomeInput').value),md=monthData();if(!Number.isFinite(n)||n<0||n>100000000){alert('Enter a valid income amount.');return;}md.income=n;save();render();$('incomeEditor').classList.add('hidden');});
+$('openExpense').addEventListener('click',()=>{ $('expenseModal').classList.remove('hidden'); $('date').value=dateString(new Date()); $('saveStatus').textContent=''; $('category').innerHTML=Object.keys(monthData().budgets).map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join(''); $('amount').focus(); });
+$('closeExpense').addEventListener('click',()=>{$('expenseModal').classList.add('hidden');});
+$('expenseModal').addEventListener('click',e=>{if(e.target===$('expenseModal'))$('expenseModal').classList.add('hidden');});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('expenseModal').classList.add('hidden');closeBudgetModal();}});
+$('expenseForm').addEventListener('submit',e=>{e.preventDefault();const amount=Number($('amount').value),date=$('date').value,category=$('category').value;if(!Number.isFinite(amount)||amount<=0||amount>100000000||!date||!monthData().budgets[category]){$('saveStatus').textContent='Enter a valid amount, date, and category.';return;}state.transactions.push({id:state.nextId++,amount,date,category,note:$('note').value.trim()});state.currentMonth=monthOf(date);ensureMonth(state.currentMonth);$('amount').value='';$('note').value='';save();render();$('saveStatus').textContent='Saved automatically ✓';$('expenseModal').classList.add('hidden');});
+let editingBudgetName=null;
+function openBudgetModal(name){const md=monthData();if(!md.budgets[name])return;editingBudgetName=name;$('budgetModalCategory').textContent=name;$('budgetAmount').value=md.budgets[name].amount;$('budgetError').textContent='';$('budgetModal').classList.remove('hidden');setTimeout(()=>$('budgetAmount').focus(),30);}
+function closeBudgetModal(){$('budgetModal').classList.add('hidden');editingBudgetName=null;}
+$('categories').addEventListener('click',e=>{const btn=e.target.closest('[data-edit-budget]');if(!btn)return;openBudgetModal(btn.dataset.editBudget);});
+$('closeBudgetModal').addEventListener('click',closeBudgetModal);
+$('budgetModal').addEventListener('click',e=>{if(e.target===$('budgetModal'))closeBudgetModal();});
+$('budgetForm').addEventListener('submit',e=>{e.preventDefault();if(!editingBudgetName)return;const n=Number($('budgetAmount').value),md=monthData(),old=md.budgets[editingBudgetName].amount;if(!Number.isFinite(n)||n<0||n>100000000){$('budgetError').textContent='Enter a valid non-negative amount.';return;}const proposed=budgetTotal(md)-old+n;if(proposed>md.income){$('budgetError').textContent='This exceeds your monthly income. Increase income or reduce another allocation first.';return;}md.budgets[editingBudgetName].amount=n;save();render();closeBudgetModal();});
+$('toggleInbound').addEventListener('click',()=>{const card=$('inboundCard'),show=card.classList.contains('hidden');card.classList.toggle('hidden',!show);$('toggleInbound').setAttribute('aria-label',show?'Hide income numbers':'Show income numbers');$('toggleInbound').setAttribute('title',show?'Hide income numbers':'Show income numbers');$('eyeIcon').innerHTML=show?'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>':'<path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a15 15 0 0 1-3.2 3.8"/><path d="M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7c1.4 0 2.7-.3 3.8-.8"/>';});
+$('emis').addEventListener('change',e=>{const input=e.target.closest('[data-emi]');if(!input)return;const i=Number(input.dataset.emi),n=Number(input.value),md=monthData(),proposed=budgetTotal(md)-md.emis[i]+n;if(!Number.isFinite(n)||n<0||n>100000000||proposed>md.income){alert('Invalid amount or allocations would exceed income.');render();return;}md.emis[i]=n;save();render();});
+$('history').addEventListener('click',e=>{const btn=e.target.closest('[data-delete]');if(!btn)return;if(!confirm('Delete this expense?'))return;state.transactions=state.transactions.filter(t=>t.id!==Number(btn.dataset.delete));save();render();});
+$('startNextMonth').addEventListener('click',()=>{const current=state.currentMonth;const [y,mo]=current.split('-').map(Number);const next=new Date(y,mo,1);const nextKey=`${next.getFullYear()}-${String(next.getMonth()+1).padStart(2,'0')}`;const exists=Boolean(state.months[nextKey]);const message=exists?`${monthLabel(nextKey)} already exists. Open it without deleting its saved data? Your ${monthLabel(current)} records will be kept.`:`Start ${monthLabel(nextKey)} with a fresh expense list? Your ${monthLabel(current)} records will be kept. The current month will not be closed and no money will be carried forward unless you close it separately.`;if(!confirm(message))return;ensureMonth(nextKey);state.currentMonth=nextKey;save();render();$('carryStatus').textContent=exists?`Opened ${monthLabel(nextKey)}. Existing data was preserved.`:`Started ${monthLabel(nextKey)} fresh. Previous month records are preserved.`;});
+$('closeMonth').addEventListener('click',()=>{const md=monthData();if(md.closed)return;const unallocated=Math.max(0,md.income-budgetTotal(md));const remaining=Object.entries(md.budgets).reduce((s,[name,b])=>s+Math.max(0,b.amount-catSpent(name,state.currentMonth)),0);const proposed=Math.max(0,unallocated+remaining+md.carryIn);if(!confirm(`Mark ${money(proposed)} as the carry-forward/savings recommendation for ${monthLabel(state.currentMonth)}? This will not transfer money automatically.`))return;md.closed=true;md.carryOut=proposed;const [y,mo]=state.currentMonth.split('-').map(Number);const next=new Date(y,mo,1);const nextKey=`${next.getFullYear()}-${String(next.getMonth()+1).padStart(2,'0')}`;const nextMd=ensureMonth(nextKey);nextMd.carryIn=proposed;state.currentMonth=nextKey;save();render();$('carryStatus').textContent=`Carried ${money(proposed)} into ${monthLabel(nextKey)} as a savings recommendation.`;});
+$('undoClose').addEventListener('click',()=>{const md=monthData();if(!md.closed)return;if(!confirm('Reopen this month and remove its carry-forward marker?'))return;md.closed=false;md.carryOut=0;save();render();});
+$('export').addEventListener('click',()=>{const rows=[['Date','Category','Amount INR','Note'],...monthTx().map(t=>[t.date,t.category,t.amount,t.note])];const csv=rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');download(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}),`pocket-${state.currentMonth}-expenses.csv`);});
+function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+$('backup').addEventListener('click',()=>{download(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),`pocket-backup-${dateString(new Date())}.json`);$('backupStatus').textContent='Backup downloaded. Keep it somewhere safe.';});
+$('restoreBtn').addEventListener('click',()=>$('restoreFile').click());
+$('restoreFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{const parsed=JSON.parse(await file.text());if(parsed.version!==1||!parsed.months||!Array.isArray(parsed.transactions))throw new Error('This does not look like a Pocket backup.');if(!confirm('Replace the current browser data with this backup? Download a backup of the current data first if you need it.'))return;state=parsed;save();render();$('backupStatus').textContent='Backup restored successfully.';}catch(err){$('backupStatus').textContent='Could not restore: '+err.message;}finally{e.target.value='';}});
+$('date').value=dateString(new Date());ensureMonth(state.currentMonth);save();render();
+})();
+</script>
+</body>
+</html>
